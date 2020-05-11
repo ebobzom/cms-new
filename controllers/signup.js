@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import db from '../config/database';
 import { validationResult } from 'express-validator';
 
-const signup = async (req, res) => {
+const signup = (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
         res.status(401).json({
@@ -59,6 +59,7 @@ const signup = async (req, res) => {
                 status: 'error',
                 error: queryErr.message
             });
+            return;
         }
 
         if(result.length > 0){
@@ -66,6 +67,7 @@ const signup = async (req, res) => {
                 status: 'error',
                 error: 'user already exists please login'
             });
+            return;
         }
 
         // hash password
@@ -77,7 +79,7 @@ const signup = async (req, res) => {
                     error: err.message
                 })
             }  
-            console.log('passed hash')
+
             // modify user password
             dataSentToDb.password = hash;
 
@@ -87,7 +89,6 @@ const signup = async (req, res) => {
             db.query(queryString, dataSentToDb, (dbErr, result, fields) => {
 
                 if(dbErr){
-                    console.log(dbErr)
                     res.status(500).json({
                         status: 'error (insert)',
                         error: dbErr.message
@@ -95,14 +96,14 @@ const signup = async (req, res) => {
                     
                     return;
                 }
-                console.log('data inserted')
+
                 // generate token and respond
 
                 const payload = {
                     userId: result.insertId,
                     isAdmin: dataSentToDb.is_admin
                 }
-                console.log('secret key: ', process.env.TOKEN_SECRET)
+
                 jwt.sign(payload, process.env.TOKEN_SECRET, (jwtErr, token) => {
                     if(jwtErr){
                         console.log(jwtErr)
@@ -112,7 +113,7 @@ const signup = async (req, res) => {
                         })
                         return;
                     }
-                    console.log('token created')
+   
                     res.cookie('token', token);
                     res.status(201).json({
                         status: 'success',
@@ -124,6 +125,7 @@ const signup = async (req, res) => {
                             contactAddress: dataSentToDb.contact_address
                         }
                     })
+                    return;
                     
                 });
                 
