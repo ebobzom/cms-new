@@ -7,11 +7,13 @@ import loginUser from '../controllers/login';
 import logout from '../controllers/logout';
 import category from '../controllers/category';
 import createSeller from '../controllers/seller';
+import editSeller from '../controllers/edit-seller';
 
 function routes(app){
     app.post('/create', createUserValidation, createUser);
     app.post('/category', categoryValidation, category);
     app.post('/seller', sellerValidation, createSeller);
+    app.put('/seller', sellerValidation, editSeller);
     app.post('/login', loginValidation, loginUser);
     app.post('/logout', logout);
 }
