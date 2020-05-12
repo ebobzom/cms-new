@@ -14,6 +14,7 @@ import createSeller from '../controllers/seller';
 import editSeller from '../controllers/edit-seller';
 import deleteSeller from '../controllers/delete-seller';
 import shipping from '../controllers/shipping';
+import updateShipping from '../controllers/update-shipping';
 
 function routes(app){
     app.post('/create', createUserValidation, createUser);
@@ -21,6 +22,7 @@ function routes(app){
     app.put('/category', editCategoryValidation, editCategory);
     app.post('/seller', sellerValidation, createSeller);
     app.post('/shipping', shippingValidation, shipping);
+    app.put('/shipping', shippingValidation, updateShipping);
     app.put('/seller', sellerValidation, editSeller);
     app.delete('/seller/:sellerId', deleteSeller);
     app.delete('/category/:categoryId', deleteCategory);
