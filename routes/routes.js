@@ -31,29 +31,48 @@ import deleteProduct from '../controllers/delete/delete-product';
 import order from '../controllers/create/order';
 import deleteOrder from '../controllers/delete/delete-order';
 import comment from '../controllers/create/comment';
+import deleteComment from '../controllers/delete/delete-comment';
 
 
 
 function routes(app){
+    // user
     app.post('/create', createUserValidation, createUser);
+
+    // category
     app.post('/category', categoryValidation, category);
     app.put('/category', editCategoryValidation, editCategory);
     app.delete('/category/:categoryId', deleteCategory);
-    app.post('/seller', sellerValidation, createSeller);
+
+    // shipping
     app.post('/shipping', shippingValidation, shipping);
     app.put('/shipping', shippingValidation, updateShipping);
     app.delete('/shipping/:shippingId', deleteShipping);
+
+    // seller
+    app.post('/seller', sellerValidation, createSeller);
     app.put('/seller', sellerValidation, editSeller);
     app.delete('/seller/:sellerId', deleteSeller);
+
+    // section
     app.post('/section', sectionValidation, section);
     app.put('/section', updateSectionValidation, updateSection);
+    app.delete('/section/:sectionId', deleteSection);
+    
+    // product
     app.post('/product', productValidation, product);
     app.put('/product', updateProductValidation, updateProduct);
     app.delete('/product/:productId', deleteProduct);
-    app.delete('/section/:sectionId', deleteSection);
+
+    // order
     app.post('/order', orderValidation, order);
     app.delete('/order/:orderId', deleteOrder);
+
+    //comment
     app.post('/comment', commentValidation, comment);
+    app.delete('/comment/:commentId', deleteComment);
+
+    // authentication and authorization
     app.post('/login', loginValidation, loginUser);
     app.post('/logout', logout);
 }
