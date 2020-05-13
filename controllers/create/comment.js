@@ -14,7 +14,7 @@ const comment = (req, res) => {
         return;
     }
    
-    // make a copy of category
+    // make a copy of comment values
     const { 
         comment,
         star,
@@ -36,13 +36,15 @@ const comment = (req, res) => {
         const queryString = `INSERT INTO product_comments SET ?`
         const { userId: user_id } = decoded;
 
-        const data = { 
+        const dataSent = { 
             comment,
             star,
             user_id,
             product_id
         };
-        db.query(queryString, data, (dbErr, result) => {
+        console.log(dataSent)
+
+        db.query(queryString, dataSent, (dbErr, result) => {
             if(dbErr){
                 res.status(401).json({
                     status: 'error',
@@ -52,21 +54,14 @@ const comment = (req, res) => {
             }
 
             // add comment id
-            data.comment = result.insertId;
-
+            dataSent.commentId = result.insertId;
             res.status(201).json({
                 status: 'success',
-                data: data
+                data: dataSent
             });
-            return;
+            return; 
 
         });
-
-        res.status(401).json({
-            status: 'error',
-            error: 'only admin is allowed'
-        });
-        return;
     });
 };
 
