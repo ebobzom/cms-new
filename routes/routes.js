@@ -9,6 +9,7 @@ import sectionValidation from '../validators/section-validation';
 import updateSectionValidation from '../validators/update-section-validation';
 import productValidation from '../validators/product-validation';
 import updateProductValidation from '../validators/update-product-validation';
+import orderValidation from '../validators/order-validation';
 import loginUser from '../controllers/login';
 import logout from '../controllers/logout';
 import category from '../controllers/create/category';
@@ -25,6 +26,8 @@ import updateSection from '../controllers/update/update-section';
 import deleteSection from '../controllers/delete/delete-section';
 import product from '../controllers/create/product';
 import updateProduct from '../controllers/update/update-product';
+import deleteProduct from '../controllers/delete/delete-product';
+import order from '../controllers/create/order';
 
 
 
@@ -43,7 +46,9 @@ function routes(app){
     app.put('/section', updateSectionValidation, updateSection);
     app.post('/product', productValidation, product);
     app.put('/product', updateProductValidation, updateProduct);
+    app.delete('/product/:productId', deleteProduct);
     app.delete('/section/:sectionId', deleteSection);
+    app.post('/order', orderValidation, order);
     app.post('/login', loginValidation, loginUser);
     app.post('/logout', logout);
 }
