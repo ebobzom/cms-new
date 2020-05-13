@@ -20,6 +20,7 @@ import updateShipping from '../controllers/update-shipping';
 import deleteShipping from '../controllers/delete-shipping';
 import section from '../controllers/section';
 import updateSection from '../controllers/update-section';
+import deleteSection from '../controllers/delete-section';
 
 
 
@@ -36,6 +37,7 @@ function routes(app){
     app.delete('/seller/:sellerId', deleteSeller);
     app.post('/section', sectionValidation, section);
     app.put('/section', updateSectionValidation, updateSection);
+    app.delete('/section/:sectionId', deleteSection);
     app.post('/login', loginValidation, loginUser);
     app.post('/logout', logout);
 }

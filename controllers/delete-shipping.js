@@ -19,7 +19,7 @@ const deleteShipping = (req, res) => {
         if(decoded.isAdmin){
 
             const shippingQuery = `DELETE From shipping WHERE shipping_id='${ shippingId }'`;
-            db.query(shippingQuery, (err) => {
+            db.query(shippingQuery, (err, result) => {
 
                 if(err){
                     res.status(401).json({
@@ -29,11 +29,19 @@ const deleteShipping = (req, res) => {
                     return;
                 }
 
-                res.status(200).json({
-                    status: 'success',
-                    data: 'deleted successfully'
-                });
+                if(result.affectedRows > 0){
+                    res.status(200).json({
+                        status: 'success',
+                        data: 'deleted successfully'
+                    });
+    
+                    return;
+                }
 
+                res.status(401).json({
+                    status: 'error',
+                    error: 'shipping id not found'
+                });
                 return;
 
                 

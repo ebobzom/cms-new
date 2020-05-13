@@ -40,11 +40,19 @@ const deleteSeller = (req, res) => {
                     return;
                 }
 
-                res.status(200).json({
-                    status: 'success',
-                    data: 'deleted successfully'
-                });
+                if(result.affectedRows > 0){
+                    res.status(200).json({
+                        status: 'success',
+                        data: 'deleted successfully'
+                    });
+    
+                    return;
+                }
 
+                res.status(401).json({
+                    status: 'error',
+                    error: 'seller idnot found'
+                });
                 return;
 
                 
