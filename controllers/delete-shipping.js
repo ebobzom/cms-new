@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import db from '../config/database';
 
-const deleteCategory = (req, res) => {
+const deleteShipping = (req, res) => {
 
-    const categoryId = req.params.categoryId
+    const shippingId = req.params.shippingId
 
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
@@ -18,8 +18,8 @@ const deleteCategory = (req, res) => {
         // check if user is an admin
         if(decoded.isAdmin){
 
-            const sellerQuery = `DELETE From category WHERE category_id='${ categoryId }'`;
-            db.query(sellerQuery, (err) => {
+            const shippingQuery = `DELETE From shipping WHERE shipping_id='${ shippingId }'`;
+            db.query(shippingQuery, (err) => {
 
                 if(err){
                     res.status(401).json({
@@ -51,4 +51,4 @@ const deleteCategory = (req, res) => {
 
 };
 
-export default deleteCategory;
+export default deleteShipping;
