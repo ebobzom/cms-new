@@ -51,7 +51,7 @@ const editSeller = (req, res) => {
                     objToBeSavedInDb.seller_id
                 ];
 
-                db.query(queryString, queryValue, (dbErr, result, fields) => {
+                db.query(queryString, queryValue, (dbErr, result) => {
                     if(dbErr){
                         res.status(401).json({
                             status: 'error',
@@ -60,11 +60,20 @@ const editSeller = (req, res) => {
                         return;
                     }
 
-                    res.status(201).json({
-                        status: 'success',
-                        data: objToBeSavedInDb
-                    });
+                    if(result.affectedRows > 0){
 
+                        res.status(201).json({
+                            status: 'success',
+                            data: objToBeSavedInDb
+                        });
+
+                        return;
+                    }
+
+                    res.status(401).json({
+                        status: 'error',
+                        error: 'seller id does not exist'
+                    });
                     return;
 
                 });

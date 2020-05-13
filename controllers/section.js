@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import db from '../config/database';
 
-const updateShipping = (req, res) => {
+const section = (req, res) => {
     // check for user input errors
     const errors = validationResult(req);
 
@@ -11,16 +11,14 @@ const updateShipping = (req, res) => {
             status: 'error',
             error: errors.array()
         });
-        return
+        return;
     }
 
-    // make a copy of shipping data
+    // make a copy of category
     const { 
-        shippingId: shipping_id,
-        companyName: company_name,
-        phoneNumber: phone_number
+        sectionName: section_name,
+        categoryId: category_id
      } = req.body;
-
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
         if(err){
@@ -34,10 +32,28 @@ const updateShipping = (req, res) => {
         // check if user is an admin
         if(decoded.isAdmin){
             
+            db.query(`SELECT * From section WHERE section_name='${ section_name }'`, (err, result) => {
+
+                if(err){
+                    res.status(401).json({
+                        status: 'error',
+                        error: err.message
+                    });
+                    return;
+                }
+
+                // check if section exists
+                if(result.length > 0){
+                    res.status(401).json({
+                        status: 'error',
+                        error: 'section already exists'
+                    });
+                    return;
+                }
 
                 // insert into db
-                const queryString = `UPDATE shipping SET company_name = ?, phone_number = ? WHERE shipping_id = ?`
-                db.query(queryString, [company_name, phone_number, shipping_id], (dbErr, result) => {
+                const queryString = `INSERT INTO section SET ?`
+                db.query(queryString, { section_name, category_id }, (dbErr, result) => {
                     if(dbErr){
                         res.status(401).json({
                             status: 'error',
@@ -45,25 +61,17 @@ const updateShipping = (req, res) => {
                         });
                         return;
                     }
-                    if(result.affectedRows > 0){
-                        res.status(200).json({
-                            status: 'success',
-                            data: {
-                                shippingId: result.insertId,
-                                phoneNumber: phone_number
-                            }
-                        });
-
-                        return;
-                    }
-
-                    res.status(401).json({
-                        status: 'error',
-                        error: 'shipping id does not exist'
+                    res.status(201).json({
+                        status: 'success',
+                        data: {
+                            sectionId: result.insertId
+                        }
                     });
+
                     return;
 
                 });
+            });
 
             return
         }
@@ -76,4 +84,4 @@ const updateShipping = (req, res) => {
     });
 };
 
-export default updateShipping;
+export default section;

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import db from '../config/database';
 
-const updateCategory = (req, res) => {
+const section = (req, res) => {
     // check for user input errors
     const errors = validationResult(req);
 
@@ -16,10 +16,10 @@ const updateCategory = (req, res) => {
 
     // make a copy of category
     const { 
-        categoryName: category_name,
-        categoryId: category_id
+        sectionName: section_name,
+        categoryId: category_id,
+        sectionId: section_id
      } = req.body;
-
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
         if(err){
@@ -32,11 +32,11 @@ const updateCategory = (req, res) => {
 
         // check if user is an admin
         if(decoded.isAdmin){
-            const queryString = `UPDATE category SET category_name='${ category_name }' WHERE category_id = '${category_id}'`;
-            db.query(queryString, (err, result) => {
+            
+            const queryString = `UPDATE section SET section_name='${ section_name }', category_id='${category_id}' WHERE section_id = '${section_id}'`;
+            db.query(queryString, (err, result, f) => {
 
                 if(err){
-                    console.log('erro ', err)
                     res.status(401).json({
                         status: 'error',
                         error: err.message
@@ -45,12 +45,11 @@ const updateCategory = (req, res) => {
                 }
 
                 if(result.affectedRows > 0){
-
                     res.status(200).json({
                         status: 'success',
                         data: {
-                            categoryName: category_name,
-                            categorId: category_id
+                            sectionName: section_name,
+                            sectionId: section_id
                         }
                     });
                     return;
@@ -58,11 +57,12 @@ const updateCategory = (req, res) => {
 
                 res.status(401).json({
                     status: 'error',
-                    error: 'category id does not exist'
+                    error: 'section id does not exist'
                 });
                 return;
                 
             });
+
 
             return
         }
@@ -75,4 +75,4 @@ const updateCategory = (req, res) => {
     });
 };
 
-export default updateCategory;
+export default section;
