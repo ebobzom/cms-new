@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
-import db from '../config/database';
+import db from '../../config/database';
 
 const section = (req, res) => {
     // check for user input errors
@@ -17,7 +17,8 @@ const section = (req, res) => {
     // make a copy of category
     const { 
         sectionName: section_name,
-        categoryId: category_id
+        categoryId: category_id,
+        sectionId: section_id
      } = req.body;
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
@@ -32,7 +33,8 @@ const section = (req, res) => {
         // check if user is an admin
         if(decoded.isAdmin){
             
-            db.query(`SELECT * From section WHERE section_name='${ section_name }'`, (err, result) => {
+            const queryString = `UPDATE section SET section_name='${ section_name }', category_id='${category_id}' WHERE section_id = '${section_id}'`;
+            db.query(queryString, (err, result, f) => {
 
                 if(err){
                     res.status(401).json({
@@ -42,36 +44,25 @@ const section = (req, res) => {
                     return;
                 }
 
-                // check if section exists
-                if(result.length > 0){
-                    res.status(401).json({
-                        status: 'error',
-                        error: 'section already exists'
+                if(result.affectedRows > 0){
+                    res.status(200).json({
+                        status: 'success',
+                        data: {
+                            sectionName: section_name,
+                            sectionId: section_id
+                        }
                     });
                     return;
                 }
 
-                // insert into db
-                const queryString = `INSERT INTO section SET ?`
-                db.query(queryString, { section_name, category_id }, (dbErr, result) => {
-                    if(dbErr){
-                        res.status(401).json({
-                            status: 'error',
-                            error: dbErr.message
-                        });
-                        return;
-                    }
-                    res.status(201).json({
-                        status: 'success',
-                        data: {
-                            sectionId: result.insertId
-                        }
-                    });
-
-                    return;
-
+                res.status(401).json({
+                    status: 'error',
+                    error: 'section id does not exist'
                 });
+                return;
+                
             });
+
 
             return
         }

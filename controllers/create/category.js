@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
-import db from '../config/database';
+import db from '../../config/database';
 
-const updateCategory = (req, res) => {
+const category = (req, res) => {
     // check for user input errors
     const errors = validationResult(req);
 
@@ -15,11 +15,7 @@ const updateCategory = (req, res) => {
     }
 
     // make a copy of category
-    const { 
-        categoryName: category_name,
-        categoryId: category_id
-     } = req.body;
-
+    const { categoryName: category_name } = req.body;
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
         if(err){
@@ -32,11 +28,10 @@ const updateCategory = (req, res) => {
 
         // check if user is an admin
         if(decoded.isAdmin){
-            const queryString = `UPDATE category SET category_name='${ category_name }' WHERE category_id = '${category_id}'`;
-            db.query(queryString, (err, result) => {
+            
+            db.query(`SELECT * From category WHERE category_name='${ category_name }'`, (err, result) => {
 
                 if(err){
-                    console.log('erro ', err)
                     res.status(401).json({
                         status: 'error',
                         error: err.message
@@ -44,24 +39,35 @@ const updateCategory = (req, res) => {
                     return;
                 }
 
-                if(result.affectedRows > 0){
-
-                    res.status(200).json({
-                        status: 'success',
-                        data: {
-                            categoryName: category_name,
-                            categorId: category_id
-                        }
+                // check if catergory exists
+                if(result.length > 0){
+                    res.status(401).json({
+                        status: 'error',
+                        error: 'category already exists'
                     });
                     return;
                 }
 
-                res.status(401).json({
-                    status: 'error',
-                    error: 'category id does not exist'
+                // insert into db
+                const queryString = `INSERT INTO category SET ?`
+                db.query(queryString, { category_name }, (dbErr, result) => {
+                    if(dbErr){
+                        res.status(401).json({
+                            status: 'error',
+                            error: dbErr.message
+                        });
+                        return;
+                    }
+                    res.status(201).json({
+                        status: 'success',
+                        data: {
+                            categoryId: result.insertId
+                        }
+                    });
+
+                    return;
+
                 });
-                return;
-                
             });
 
             return
@@ -75,4 +81,4 @@ const updateCategory = (req, res) => {
     });
 };
 
-export default updateCategory;
+export default category;

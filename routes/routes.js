@@ -9,18 +9,18 @@ import sectionValidation from '../validators/section-validation';
 import updateSectionValidation from '../validators/update-section-validation';
 import loginUser from '../controllers/login';
 import logout from '../controllers/logout';
-import category from '../controllers/category';
-import editCategory from '../controllers/update-category';
-import deleteCategory from '../controllers/delete-category';
-import createSeller from '../controllers/seller';
-import editSeller from '../controllers/edit-seller';
-import deleteSeller from '../controllers/delete-seller';
-import shipping from '../controllers/shipping';
-import updateShipping from '../controllers/update-shipping';
-import deleteShipping from '../controllers/delete-shipping';
-import section from '../controllers/section';
-import updateSection from '../controllers/update-section';
-import deleteSection from '../controllers/delete-section';
+import category from '../controllers/create/category';
+import editCategory from '../controllers/update/update-category';
+import deleteCategory from '../controllers/delete/delete-category';
+import createSeller from '../controllers/create/seller';
+import editSeller from '../controllers/update/edit-seller';
+import deleteSeller from '../controllers/delete/delete-seller';
+import shipping from '../controllers/create/shipping';
+import updateShipping from '../controllers/update/update-shipping';
+import deleteShipping from '../controllers/delete/delete-shipping';
+import section from '../controllers/create/section';
+import updateSection from '../controllers/update/update-section';
+import deleteSection from '../controllers/delete/delete-section';
 
 
 

@@ -1,30 +1,24 @@
 import jwt from 'jsonwebtoken';
-import db from '../config/database';
 import { validationResult } from 'express-validator';
+import db from '../../config/database';
 
-const createSeller = (req, res) => {
+const shipping = (req, res) => {
+    // check for user input errors
     const errors = validationResult(req);
-    
-    // if error found in user input
+
     if(!errors.isEmpty()){
         res.status(401).json({
             status: 'error',
             error: errors.array()
         });
-        return;
+        return
     }
 
+    // make a copy of shipping data
     const { 
         companyName: company_name,
-        address,
-        sellerWebsite: seller_website,
-        sellerName: seller_name,
-        sellerPhoneNumber: seller_phone_number
-    } = req.body;
-
-    const objToBeSavedInDb = {
-        company_name, seller_name, seller_website, seller_phone_number, address
-    };
+        phoneNumber: phone_number
+     } = req.body;
 
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
@@ -38,9 +32,8 @@ const createSeller = (req, res) => {
 
         // check if user is an admin
         if(decoded.isAdmin){
-
-            const sellerQuery = `SELECT * From sellers WHERE company_name='${ company_name }'`;
-            db.query(sellerQuery, (err, result) => {
+            
+            db.query(`SELECT * From shipping WHERE company_name='${ company_name }'`, (err, result) => {
 
                 if(err){
                     res.status(401).json({
@@ -50,18 +43,18 @@ const createSeller = (req, res) => {
                     return;
                 }
 
-                // check if seller exists
+                // check if company type exists
                 if(result.length > 0){
                     res.status(401).json({
                         status: 'error',
-                        error: 'seller already exists'
+                        error: 'shipping company already exists'
                     });
                     return;
                 }
 
                 // insert into db
-                const queryString = `INSERT INTO sellers SET ?`
-                db.query(queryString, objToBeSavedInDb, (dbErr, result) => {
+                const queryString = `INSERT INTO shipping SET ?`
+                db.query(queryString, { company_name, phone_number }, (dbErr, result) => {
                     if(dbErr){
                         res.status(401).json({
                             status: 'error',
@@ -69,11 +62,12 @@ const createSeller = (req, res) => {
                         });
                         return;
                     }
-                    objToBeSavedInDb.sellerId = result.insertId;
-
                     res.status(201).json({
                         status: 'success',
-                        data: objToBeSavedInDb
+                        data: {
+                            shippingId: result.insertId,
+                            phoneNumber: phone_number
+                        }
                     });
 
                     return;
@@ -90,7 +84,6 @@ const createSeller = (req, res) => {
         });
         return;
     });
-
 };
 
-export default createSeller;
+export default shipping;

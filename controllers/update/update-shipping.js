@@ -1,31 +1,25 @@
 import jwt from 'jsonwebtoken';
-import db from '../config/database';
 import { validationResult } from 'express-validator';
+import db from '../../config/database';
 
-const editSeller = (req, res) => {
+const updateShipping = (req, res) => {
+    // check for user input errors
     const errors = validationResult(req);
-    
-    // if error found in user input
+
     if(!errors.isEmpty()){
         res.status(401).json({
             status: 'error',
             error: errors.array()
         });
-        return;
+        return
     }
 
+    // make a copy of shipping data
     const { 
+        shippingId: shipping_id,
         companyName: company_name,
-        address,
-        sellerWebsite: seller_website,
-        sellerName: seller_name,
-        sellerPhoneNumber: seller_phone_number,
-        sellerId: seller_id
-    } = req.body;
-
-    const objToBeSavedInDb = {
-        seller_id, company_name, seller_name, seller_website, seller_phone_number, address
-    };
+        phoneNumber: phone_number
+     } = req.body;
 
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
@@ -39,19 +33,11 @@ const editSeller = (req, res) => {
 
         // check if user is an admin
         if(decoded.isAdmin){
+            
 
                 // insert into db
-                const queryString = `UPDATE sellers SET company_name = ?, address = ?, seller_website = ?, seller_name = ?, seller_phone_number = ? WHERE seller_id = ?`;
-                const queryValue = [
-                    objToBeSavedInDb.company_name, 
-                    objToBeSavedInDb.address,
-                    objToBeSavedInDb.seller_website,
-                    objToBeSavedInDb.seller_name,
-                    objToBeSavedInDb.seller_phone_number,
-                    objToBeSavedInDb.seller_id
-                ];
-
-                db.query(queryString, queryValue, (dbErr, result) => {
+                const queryString = `UPDATE shipping SET company_name = ?, phone_number = ? WHERE shipping_id = ?`
+                db.query(queryString, [company_name, phone_number, shipping_id], (dbErr, result) => {
                     if(dbErr){
                         res.status(401).json({
                             status: 'error',
@@ -59,12 +45,13 @@ const editSeller = (req, res) => {
                         });
                         return;
                     }
-
                     if(result.affectedRows > 0){
-
-                        res.status(201).json({
+                        res.status(200).json({
                             status: 'success',
-                            data: objToBeSavedInDb
+                            data: {
+                                shippingId: result.insertId,
+                                phoneNumber: phone_number
+                            }
                         });
 
                         return;
@@ -72,12 +59,11 @@ const editSeller = (req, res) => {
 
                     res.status(401).json({
                         status: 'error',
-                        error: 'seller id does not exist'
+                        error: 'shipping id does not exist'
                     });
                     return;
 
                 });
-
 
             return
         }
@@ -88,7 +74,6 @@ const editSeller = (req, res) => {
         });
         return;
     });
-
 };
 
-export default editSeller;
+export default updateShipping;

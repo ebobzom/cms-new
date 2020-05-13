@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
-import db from '../config/database';
+import db from '../../config/database';
 
-const category = (req, res) => {
+const section = (req, res) => {
     // check for user input errors
     const errors = validationResult(req);
 
@@ -15,7 +15,10 @@ const category = (req, res) => {
     }
 
     // make a copy of category
-    const { categoryName: category_name } = req.body;
+    const { 
+        sectionName: section_name,
+        categoryId: category_id
+     } = req.body;
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
         if(err){
@@ -29,7 +32,7 @@ const category = (req, res) => {
         // check if user is an admin
         if(decoded.isAdmin){
             
-            db.query(`SELECT * From category WHERE category_name='${ category_name }'`, (err, result) => {
+            db.query(`SELECT * From section WHERE section_name='${ section_name }'`, (err, result) => {
 
                 if(err){
                     res.status(401).json({
@@ -39,18 +42,18 @@ const category = (req, res) => {
                     return;
                 }
 
-                // check if catergory exists
+                // check if section exists
                 if(result.length > 0){
                     res.status(401).json({
                         status: 'error',
-                        error: 'category already exists'
+                        error: 'section already exists'
                     });
                     return;
                 }
 
                 // insert into db
-                const queryString = `INSERT INTO category SET ?`
-                db.query(queryString, { category_name }, (dbErr, result) => {
+                const queryString = `INSERT INTO section SET ?`
+                db.query(queryString, { section_name, category_id }, (dbErr, result) => {
                     if(dbErr){
                         res.status(401).json({
                             status: 'error',
@@ -61,7 +64,7 @@ const category = (req, res) => {
                     res.status(201).json({
                         status: 'success',
                         data: {
-                            categoryId: result.insertId
+                            sectionId: result.insertId
                         }
                     });
 
@@ -81,4 +84,4 @@ const category = (req, res) => {
     });
 };
 
-export default category;
+export default section;

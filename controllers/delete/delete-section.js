@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
-import db from '../config/database';
+import db from '../../config/database';
 import { validationResult } from 'express-validator';
 
-const deleteSeller = (req, res) => {
+const deleteSection = (req, res) => {
     const errors = validationResult(req);
     
     // if error found in user input
@@ -14,7 +14,7 @@ const deleteSeller = (req, res) => {
         return;
     }
 
-    const sellerId = req.params.sellerId
+    const sectionId = req.params.sectionId
 
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
@@ -29,8 +29,8 @@ const deleteSeller = (req, res) => {
         // check if user is an admin
         if(decoded.isAdmin){
 
-            const sellerQuery = `DELETE From sellers WHERE seller_id='${ sellerId }'`;
-            db.query(sellerQuery, (err, result, fields) => {
+            const sectionQuery = `DELETE From section WHERE section_id='${ sectionId }'`;
+            db.query(sectionQuery, (err, result) => {
 
                 if(err){
                     res.status(401).json({
@@ -48,10 +48,9 @@ const deleteSeller = (req, res) => {
     
                     return;
                 }
-
                 res.status(401).json({
                     status: 'error',
-                    error: 'seller idnot found'
+                    error: 'section id not found'
                 });
                 return;
 
@@ -70,4 +69,4 @@ const deleteSeller = (req, res) => {
 
 };
 
-export default deleteSeller;
+export default deleteSection;
