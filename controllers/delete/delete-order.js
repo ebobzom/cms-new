@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import db from '../../config/database';
 
-const deleteCategory = (req, res) => {
+const deleteOrder = (req, res) => {
 
-    const categoryId = req.params.categoryId
+    const orderId = req.params.orderId
 
     const token = req.cookies.token;
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
@@ -15,10 +15,8 @@ const deleteCategory = (req, res) => {
             return;
         }
 
-        // check if user is an admin
-        if(decoded.isAdmin){
 
-            const sellerQuery = `DELETE From category WHERE category_id='${ categoryId }'`;
+            const sellerQuery = `DELETE From orders WHERE order_id='${ orderId }'`;
             db.query(sellerQuery, (err, result) => {
 
                 if(err){
@@ -40,23 +38,12 @@ const deleteCategory = (req, res) => {
 
                 res.status(401).json({
                     status: 'error',
-                    error: 'category id required'
+                    error: 'order id incorrect'
                 });
-                return;
-
-                
+                return;  
             });
-
-            return
-        }
-
-        res.status(401).json({
-            status: 'error',
-            error: 'only admin is allowed'
-        });
-        return;
     });
 
 };
 
-export default deleteCategory;
+export default deleteOrder;

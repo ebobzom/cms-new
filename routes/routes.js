@@ -28,6 +28,7 @@ import product from '../controllers/create/product';
 import updateProduct from '../controllers/update/update-product';
 import deleteProduct from '../controllers/delete/delete-product';
 import order from '../controllers/create/order';
+import deleteOrder from '../controllers/delete/delete-order';
 
 
 
@@ -49,6 +50,7 @@ function routes(app){
     app.delete('/product/:productId', deleteProduct);
     app.delete('/section/:sectionId', deleteSection);
     app.post('/order', orderValidation, order);
+    app.delete('/order/:orderId', deleteOrder);
     app.post('/login', loginValidation, loginUser);
     app.post('/logout', logout);
 }
