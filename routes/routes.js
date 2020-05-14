@@ -11,6 +11,7 @@ import productValidation from '../validators/product-validation';
 import updateProductValidation from '../validators/update-product-validation';
 import orderValidation from '../validators/order-validation';
 import commentValidation from '../validators/comment-validation';
+import productImageValidation from '../validators/product-image-validation';
 import loginUser from '../controllers/login';
 import logout from '../controllers/logout';
 import category from '../controllers/create/category';
@@ -32,12 +33,16 @@ import order from '../controllers/create/order';
 import deleteOrder from '../controllers/delete/delete-order';
 import comment from '../controllers/create/comment';
 import deleteComment from '../controllers/delete/delete-comment';
+import productImage from '../controllers/create/product-images';
 
 
 
 function routes(app){
     // user
     app.post('/create', createUserValidation, createUser);
+
+    // product image
+    app.post('/image', productImageValidation, productImage);
 
     // category
     app.post('/category', categoryValidation, category);
