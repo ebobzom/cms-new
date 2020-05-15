@@ -34,6 +34,7 @@ import deleteOrder from '../controllers/delete/delete-order';
 import comment from '../controllers/create/comment';
 import deleteComment from '../controllers/delete/delete-comment';
 import productImage from '../controllers/create/product-images';
+import deleteProductImage from '../controllers/delete/delete-product-image';
 
 
 
@@ -43,6 +44,7 @@ function routes(app){
 
     // product image
     app.post('/image', productImageValidation, productImage);
+    app.delete('/image/:productImageId', deleteProductImage);
 
     // category
     app.post('/category', categoryValidation, category);
