@@ -25,11 +25,11 @@ const productImageUpload = (req, res) => {
             });
             return;
         }
-        const { public_id, secure_url } = cloudinaryResult;
+        const { secure_url } = cloudinaryResult;
 
         // insert into db
         const queryString = 'INSERT INTO product_images SET ?'
-        db.query(queryString, { public_id, secure_url, product_id }, (dbErr, result) => {
+        db.query(queryString, { secure_url, product_id }, (dbErr, result) => {
             if(dbErr){
                 res.status(401).json({
                     status: "error",
@@ -40,13 +40,11 @@ const productImageUpload = (req, res) => {
 
             // add image id
 
-
             res.status(201).json({
                 status: 'success',
                 data: {
                     image_id: result.insertId,
                     productId: product_id,
-                    publicId: public_id,
                     url: secure_url
                 }
             });

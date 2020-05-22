@@ -35,10 +35,16 @@ import comment from '../controllers/create/comment';
 import deleteComment from '../controllers/delete/delete-comment';
 import productImage from '../controllers/create/product-images';
 import deleteProductImage from '../controllers/delete/delete-product-image';
+import getAllProduct from '../controllers/get/all-products';
 
 
 
 function routes(app){
+    // get all products
+    app.get('/product', getAllProduct);
+
+
+
     // user
     app.post('/create', createUserValidation, createUser);
 
